@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,6 +19,12 @@ class FlexxApp extends StatelessWidget {
 }
 
 class FormularioTransferencia extends StatelessWidget {
+  final TextEditingController _controladorCampoNumeroConta =
+      TextEditingController();
+  final TextEditingController _controladorCampoValor = TextEditingController();
+
+  static bool stateOfAlert = false;
+
   @override
   Widget build(BuildContext buildContext) {
     return Scaffold(
@@ -26,33 +33,77 @@ class FormularioTransferencia extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(24.0),
+          Padding(
+            padding: const EdgeInsets.all(24.0),
             child: TextField(
-              style: TextStyle(
+              controller: _controladorCampoNumeroConta,
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: 'Número da conta', hintText: '0000'),
               keyboardType: TextInputType.number,
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(24.0),
+          Padding(
+            padding: const EdgeInsets.all(24.0),
             child: TextField(
-              decoration:
-                  InputDecoration(
-                      icon: Icon(Icons.monetization_on),
-                      labelText: 'Valor', hintText: '100.00R\$'),
-              style: TextStyle(
+              controller: _controladorCampoValor,
+              decoration: const InputDecoration(
+                  icon: Icon(Icons.monetization_on),
+                  labelText: 'Valor da transferência',
+                  hintText: '100.00 R\$'),
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
               keyboardType: TextInputType.number,
             ),
           ),
-          ElevatedButton(onPressed: () {}, child: const Text('Adicionar'))
+          ElevatedButton(
+            onPressed: () {
+              debugPrint(_controladorCampoNumeroConta.text);
+              debugPrint(_controladorCampoValor.text);
+
+              final int? numeroConta =
+                  int.tryParse(_controladorCampoNumeroConta.text);
+              final int? valorTransf =
+                  int.tryParse(_controladorCampoValor.text);
+
+              try {
+                numeroConta != null && valorTransf != null
+                    ? Transferencia(numeroConta, valorTransf)
+                    : throw Exception("Valores de referência invalidos");
+              } on Exception catch (e) {
+                debugPrint(e.toString());
+                FormularioTransferencia.stateOfAlert = true;
+              }
+            },
+            child: const Text('Adicionar'),
+          ),
+          //const Aviso(),
+        ],
+      ),
+    );
+  }
+}
+
+class Aviso extends StatelessWidget {
+  const Aviso({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint('Aviso!!!');
+    return const Padding(
+      padding: EdgeInsets.all(1.0),
+      child: CupertinoAlertDialog(
+        title: Text(
+          'Ocorreu um erro!',
+          style: TextStyle(fontSize: 16),
+        ),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(child: Text("OK"))
         ],
       ),
     );
@@ -65,17 +116,14 @@ class ListaTransferencias extends StatelessWidget {
     return Scaffold(
       body: const Column(
         children: <Widget>[
-          EntregaValor("100", "100"),
-          EntregaValor("100", "100"),
-          EntregaValor("100", "100"),
-          EntregaValor("100", "100"),
+          Transferencia(100, 100),
         ],
       ),
       appBar: AppBar(
         backgroundColor: Colors.red,
         title: const Text(
           style: TextStyle(color: Colors.white),
-          "Flexx - Entregas Rápidas",
+          "Flexx - numeroContas Rápidas",
           textDirection: TextDirection.ltr,
         ),
       ),
@@ -87,11 +135,11 @@ class ListaTransferencias extends StatelessWidget {
   }
 }
 
-class EntregaValor extends StatelessWidget {
-  final String entrega;
-  final String valor;
+class Transferencia extends StatelessWidget {
+  final int? numeroConta;
+  final int? valor;
 
-  const EntregaValor(this.entrega, this.valor, {super.key});
+  const Transferencia(this.numeroConta, this.valor, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +147,7 @@ class EntregaValor extends StatelessWidget {
       color: Colors.grey,
       child: ListTile(
         title: Text(
-          entrega,
+          numeroConta.toString(),
           style: const TextStyle(
             color: Colors.white,
           ),
