@@ -77,8 +77,7 @@ class FormularioTransferencia extends StatelessWidget {
               debugPrint(_controladorValor.text);
               final int? numeroConta =
                   int.tryParse(_controladorNumeroConta.text);
-              final int? valorTransf =
-                  int.tryParse(_controladorValor.text);
+              final int? valorTransf = int.tryParse(_controladorValor.text);
 
               try {
                 numeroConta != null && valorTransf != null
