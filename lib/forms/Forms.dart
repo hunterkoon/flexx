@@ -44,7 +44,7 @@ class FormularioTransferencia extends StatelessWidget {
   final TextEditingController _controladorValor = TextEditingController();
 
   @override
-  Widget build(BuildContext buildContext) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista de transferências!'),
@@ -78,17 +78,23 @@ class FormularioTransferencia extends StatelessWidget {
               final int? numeroConta =
                   int.tryParse(_controladorNumeroConta.text);
               final int? valorTransf = int.tryParse(_controladorValor.text);
-
               try {
-                numeroConta != null && valorTransf != null
-                    ? Transferencia(numeroConta, valorTransf)
-                    : throw Exception("Valores de referência invalidos");
+
+                if (numeroConta != null && valorTransf != null) {
+                  Transferencia transferenciaCriada = Transferencia(numeroConta, valorTransf);
+                  debugPrint('$transferenciaCriada');
+                  Navigator.pop(context, transferenciaCriada);
+                } else {
+                  throw Exception("Valores de referência invalidos");
+                }
+
               } on Exception catch (e) {
                 debugPrint(e.toString());
               }
             },
             child: const Text('Adicionar'),
           ),
+
           //const Aviso(),
         ],
       ),
@@ -100,7 +106,7 @@ class Transferencia extends StatelessWidget {
   final int? numeroConta;
   final int? valor;
 
-  const Transferencia(this.numeroConta, this.valor, {super.key});
+  const Transferencia(this.numeroConta, this.valor);
 
   @override
   Widget build(BuildContext context) {

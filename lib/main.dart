@@ -16,13 +16,11 @@ class FlexxApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: FormularioTransferencia(),
+        body: ListaTransferencias(),
       ),
     );
   }
 }
-
-
 
 class Aviso extends StatelessWidget {
   const Aviso({super.key});
@@ -45,29 +43,40 @@ class Aviso extends StatelessWidget {
   }
 }
 
-// class ListaTransferencias extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: const Column(
-//         children: <Widget>[
-//           Transferencia(100, 100),
-//         ],
-//       ),
-//       appBar: AppBar(
-//         backgroundColor: Colors.red,
-//         title: const Text(
-//           style: TextStyle(color: Colors.white),
-//           "Flexx - numeroContas Rápidas",
-//           textDirection: TextDirection.ltr,
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: () {},
-//         child: const Icon(Icons.add),
-//       ),
-//     );
-//   }
-// }
-
-
+class ListaTransferencias extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: const Column(
+        children: <Widget>[
+          Transferencia(100, 100),
+          Transferencia(100, 100),
+        ],
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        title: const Text(
+          style: TextStyle(color: Colors.white),
+          "Flexx - Encomendas Rápidas",
+          textDirection: TextDirection.ltr,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Future<Transferencia?> future =
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return FormularioTransferencia();
+          }));
+          future.then((transferenciaRecebida) {
+            if (transferenciaRecebida != null) {
+              if (transferenciaRecebida.numeroConta != null) {
+                debugPrint('Valores recebidos do then');
+              }
+            }
+          });
+        },
+      ),
+    );
+  }
+}
