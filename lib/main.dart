@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'forms/Forms.dart';
@@ -22,36 +19,26 @@ class FlexxApp extends StatelessWidget {
   }
 }
 
-class Aviso extends StatelessWidget {
-  const Aviso({super.key});
+class ListaTransferencias extends StatefulWidget {
+  List<Transferencia?> _transferencias = [];
 
   @override
-  Widget build(BuildContext context) {
-    debugPrint('Aviso!!!');
-    return const Padding(
-      padding: EdgeInsets.all(1.0),
-      child: CupertinoAlertDialog(
-        title: Text(
-          'Ocorreu um erro!',
-          style: TextStyle(fontSize: 16),
-        ),
-        actions: <CupertinoDialogAction>[
-          CupertinoDialogAction(child: Text("OK"))
-        ],
-      ),
-    );
+  State<StatefulWidget> createState() {
+    return ListaTranferenciasState();
   }
 }
 
-class ListaTransferencias extends StatelessWidget {
+class ListaTranferenciasState extends State<ListaTransferencias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Column(
-        children: <Widget>[
-          Transferencia(100, 100),
-          Transferencia(100, 100),
-        ],
+      body: ListView.builder(
+        itemCount: widget._transferencias.length,
+        itemBuilder: (context, idx) {
+          final transferencia = widget._transferencias[idx];
+          return Transferencia(
+              transferencia?.numeroConta, transferencia?.valor);
+        },
       ),
       appBar: AppBar(
         backgroundColor: Colors.red,
@@ -62,18 +49,22 @@ class ListaTransferencias extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.red,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         onPressed: () {
-          Future<Transferencia?> future =
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return FormularioTransferencia();
-          }));
+          Future<Transferencia?> future = Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return FormularioTransferencia();
+            }),
+          );
           future.then((transferenciaRecebida) {
-            if (transferenciaRecebida != null) {
-              if (transferenciaRecebida.numeroConta != null) {
-                debugPrint('Valores recebidos do then');
-              }
-            }
+            setState(() {
+              widget._transferencias.add(transferenciaRecebida);
+            });
           });
         },
       ),

@@ -16,7 +16,7 @@ class Editor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(28.0),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
@@ -64,9 +64,9 @@ class FormularioTransferencia extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: Colors.black,
+              backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
+                borderRadius: BorderRadius.circular(25.0),
               ),
               textStyle: const TextStyle(
                 fontSize: 16,
@@ -79,10 +79,8 @@ class FormularioTransferencia extends StatelessWidget {
                   int.tryParse(_controladorNumeroConta.text);
               final int? valorTransf = int.tryParse(_controladorValor.text);
               try {
-
                 if (numeroConta != null && valorTransf != null) {
                   Transferencia transferenciaCriada = Transferencia(numeroConta, valorTransf);
-                  debugPrint('$transferenciaCriada');
                   Navigator.pop(context, transferenciaCriada);
                 } else {
                   throw Exception("Valores de referência invalidos");
