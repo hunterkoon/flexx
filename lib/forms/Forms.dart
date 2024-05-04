@@ -49,52 +49,54 @@ class FormularioTransferencia extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Lista de transferências!'),
       ),
-      body: Column(
-        children: [
-          Editor(
-              title: "Número da Conta",
-              tip: "0000",
-              controller: _controladorNumeroConta,
-              icon: Icons.numbers),
-          Editor(
-              title: "Valor da Transferência",
-              tip: "R\$ 200.00",
-              controller: _controladorValor,
-              icon: Icons.monetization_on),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.0),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Editor(
+                title: "Número da Conta",
+                tip: "0000",
+                controller: _controladorNumeroConta,
+                icon: Icons.numbers),
+            Editor(
+                title: "Valor da Transferência",
+                tip: "R\$ 200.00",
+                controller: _controladorValor,
+                icon: Icons.monetization_on),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                ),
               ),
-              textStyle: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            onPressed: () {
-              debugPrint(_controladorNumeroConta.text);
-              debugPrint(_controladorValor.text);
-              final int? numeroConta =
-                  int.tryParse(_controladorNumeroConta.text);
-              final int? valorTransf = int.tryParse(_controladorValor.text);
-              try {
-                if (numeroConta != null && valorTransf != null) {
-                  Transferencia transferenciaCriada = Transferencia(numeroConta, valorTransf);
-                  Navigator.pop(context, transferenciaCriada);
-                } else {
-                  throw Exception("Valores de referência invalidos");
+              onPressed: () {
+                debugPrint(_controladorNumeroConta.text);
+                debugPrint(_controladorValor.text);
+                final int? numeroConta =
+                    int.tryParse(_controladorNumeroConta.text);
+                final int? valorTransf = int.tryParse(_controladorValor.text);
+                try {
+                  if (numeroConta != null && valorTransf != null) {
+                    Transferencia transferenciaCriada = Transferencia(numeroConta, valorTransf);
+                    Navigator.pop(context, transferenciaCriada);
+                  } else {
+                    throw Exception("Valores de referência invalidos");
+                  }
+
+                } on Exception catch (e) {
+                  debugPrint(e.toString());
                 }
+              },
+              child: const Text('Adicionar'),
+            ),
 
-              } on Exception catch (e) {
-                debugPrint(e.toString());
-              }
-            },
-            child: const Text('Adicionar'),
-          ),
-
-          //const Aviso(),
-        ],
+            //const Aviso(),
+          ],
+        ),
       ),
     );
   }
