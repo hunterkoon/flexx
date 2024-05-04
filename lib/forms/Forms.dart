@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 
 class Editor extends StatelessWidget {
-  final String title;
-  final String tip;
-  final TextEditingController controller;
-  final IconData icon;
+  final String? title;
+  final String? tip;
+  final TextEditingController? controller;
+  final IconData? icon;
+  final bool isPassword;
 
-  const Editor(
-      {super.key,
-      required this.title,
-      required this.tip,
-      required this.controller,
-      required this.icon});
+  const Editor(this.title, this.tip, this.controller, this.icon, this.isPassword, {super.key});
+
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(28.0),
       child: TextField(
+        obscureText: isPassword,
         controller: controller,
         decoration: InputDecoration(
           icon: Icon(
@@ -52,16 +50,10 @@ class FormularioTransferencia extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Editor(
-                title: "Número da Conta",
-                tip: "0000",
-                controller: _controladorNumeroConta,
-                icon: Icons.numbers),
-            Editor(
-                title: "Valor da Transferência",
-                tip: "R\$ 200.00",
-                controller: _controladorValor,
-                icon: Icons.monetization_on),
+            Editor("Número da Conta", "0000", _controladorNumeroConta,
+                Icons.numbers,false),
+            Editor("Valor da Transferência", "R\$ 200.00", _controladorValor,
+                Icons.monetization_on,false),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -77,16 +69,16 @@ class FormularioTransferencia extends StatelessWidget {
                 debugPrint(_controladorNumeroConta.text);
                 debugPrint(_controladorValor.text);
                 final int? numeroConta =
-                    int.tryParse(_controladorNumeroConta.text);
+                int.tryParse(_controladorNumeroConta.text);
                 final int? valorTransf = int.tryParse(_controladorValor.text);
                 try {
                   if (numeroConta != null && valorTransf != null) {
-                    Transferencia transferenciaCriada = Transferencia(numeroConta, valorTransf);
+                    Transferencia transferenciaCriada =
+                    Transferencia(numeroConta, valorTransf);
                     Navigator.pop(context, transferenciaCriada);
                   } else {
                     throw Exception("Valores de referência invalidos");
                   }
-
                 } on Exception catch (e) {
                   debugPrint(e.toString());
                 }
@@ -106,7 +98,7 @@ class Transferencia extends StatelessWidget {
   final int? numeroConta;
   final int? valor;
 
-  const Transferencia(this.numeroConta, this.valor);
+  const Transferencia(this.numeroConta, this.valor, {super.key});
 
   @override
   Widget build(BuildContext context) {
