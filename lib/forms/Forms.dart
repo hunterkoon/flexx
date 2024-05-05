@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
+import '../forms/ActionButtons.dart';
 
 class Editor extends StatelessWidget {
-  final String? title;
-  final String? tip;
-  final TextEditingController? controller;
-  final IconData? icon;
-  final bool isPassword;
+  String? title;
+  String? tip;
+  TextEditingController? controller;
+  IconData? icon;
+  bool isPassword = false;
+  bool isTextFiled = true;
 
-  const Editor(this.title, this.tip, this.controller, this.icon, this.isPassword, {super.key});
+  Editor.numero(this.title, this.tip, this.controller, this.icon, {super.key}) {
+    isPassword = false;
+    isTextFiled = false;
+  }
 
+  Editor.texto(this.title, this.tip, this.controller, this.icon, {super.key}) {
+    isPassword = false;
+    isTextFiled = true;
+  }
+
+  Editor.senha(this.title, this.tip, this.controller, this.icon, {super.key}) {
+    isPassword = true;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(28.0),
+      padding: const EdgeInsets.all(22.0),
       child: TextField(
         obscureText: isPassword,
         controller: controller,
@@ -31,15 +44,15 @@ class Editor extends StatelessWidget {
           fontSize: 16,
           color: Colors.black,
         ),
-        keyboardType: TextInputType.number,
+        keyboardType: isTextFiled ? TextInputType.text : TextInputType.number ,
       ),
     );
   }
 }
 
 class FormularioTransferencia extends StatelessWidget {
-  final TextEditingController _controladorNumeroConta = TextEditingController();
-  final TextEditingController _controladorValor = TextEditingController();
+  final TextEditingController controladorNumeroConta = TextEditingController();
+  final TextEditingController controladorValor = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +63,10 @@ class FormularioTransferencia extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Editor("Número da Conta", "0000", _controladorNumeroConta,
-                Icons.numbers,false),
-            Editor("Valor da Transferência", "R\$ 200.00", _controladorValor,
-                Icons.monetization_on,false),
+            Editor.texto("Número da Conta", "0000", controladorNumeroConta,
+                Icons.numbers),
+            Editor.texto("Valor da Transferência", "R\$ 200.00",
+                controladorValor, Icons.monetization_on),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -66,15 +79,15 @@ class FormularioTransferencia extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                debugPrint(_controladorNumeroConta.text);
-                debugPrint(_controladorValor.text);
+                debugPrint(controladorNumeroConta.text);
+                debugPrint(controladorValor.text);
                 final int? numeroConta =
-                int.tryParse(_controladorNumeroConta.text);
-                final int? valorTransf = int.tryParse(_controladorValor.text);
+                    int.tryParse(controladorNumeroConta.text);
+                final int? valorTransf = int.tryParse(controladorValor.text);
                 try {
                   if (numeroConta != null && valorTransf != null) {
                     Transferencia transferenciaCriada =
-                    Transferencia(numeroConta, valorTransf);
+                        Transferencia(numeroConta, valorTransf);
                     Navigator.pop(context, transferenciaCriada);
                   } else {
                     throw Exception("Valores de referência invalidos");
@@ -115,6 +128,43 @@ class Transferencia extends StatelessWidget {
           Icons.monetization_on,
         ),
         subtitle: Text('R\$$valor'),
+      ),
+    );
+  }
+}
+
+class FormularioCadastro extends StatelessWidget {
+  final TextEditingController documento = TextEditingController();
+  final TextEditingController senha = TextEditingController();
+  final TextEditingController nomeCompleto = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController tipoDocumento = TextEditingController();
+  final TextEditingController numeroCelular = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cadastre-se'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Editor.numero("Cpf / Cnpj", "0000", documento, Icons.perm_identity),
+            Editor.senha("Senha", "0000", senha, Icons.password),
+            Editor.texto("Nome Completo", "José Da Silva", nomeCompleto, Icons.text_format),
+            Editor.texto("E-mail", "jose@gmail.com", email, Icons.email),
+            Editor.numero("Telefone", "11939213360", numeroCelular, Icons.phone_android),
+            ActionButtonCadastrarWidget(
+              documento: documento,
+              senha: senha,
+              nomeCompleto: nomeCompleto,
+              email: email,
+              tipoDocumento: tipoDocumento,
+              numeroCelular: numeroCelular,
+            )
+          ],
+        ),
       ),
     );
   }

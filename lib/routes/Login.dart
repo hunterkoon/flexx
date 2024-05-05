@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../forms/Forms.dart';
+import '../forms/ActionButtons.dart';
 import '../main.dart';
 
 class Login extends StatelessWidget {
@@ -10,42 +11,26 @@ class Login extends StatelessWidget {
 
     return Scaffold(
       body: Column(children: [
-        Editor(
+        Editor.texto(
           'CPF/CNPJ',
           '12345678912',
           documentCtrl,
-          null,
-          false
+          Icons.account_circle,
         ),
-        Editor(
+        Editor.senha(
           'Senha',
           '#####',
           passwordCtlr,
-          null,
-          true
+          Icons.password,
         ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25.0),
-            ),
-            textStyle: const TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          onPressed: () {},
-          child: const Text('Entrar'),
-        ),
+        ActionButtonEntrarWidget(documentCtrl: documentCtrl, passwordCtlr: passwordCtlr),
         TextButton(
           style: TextButton.styleFrom(foregroundColor: Colors.grey),
           onPressed: () {
             Future<ListaTransferencias?> future = Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                //TODO CRIAR FORMULÁRIO DE REGISTRO
-                return FormularioTransferencia();
+                return FormularioCadastro();
               }),
             );
             debugPrint('Primeiro Acesso');
@@ -56,3 +41,5 @@ class Login extends StatelessWidget {
     );
   }
 }
+
+
