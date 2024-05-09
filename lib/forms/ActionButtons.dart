@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flexx/http/HttpRequests.dart';
 import 'package:flexx/models/UserDTO.dart';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
+import 'dart:convert' show utf8;
 
 class ActionButtonEntrarWidget extends StatelessWidget {
   const ActionButtonEntrarWidget({
@@ -77,22 +79,41 @@ class ActionButtonCadastrarWidget extends StatelessWidget {
             UserDTO(nomeCompleto.text, documento.text, 'CPF', senha.text);
         debugPrint('${user.toJson()}');
 
-        Future<http.Response?> fetchRegister() async {
-          final http.Response response;
+        Future<http.Response> createUserRequest = HttpRequests.requestHttpPost(
+            'http://192.168.1.23:8081/api/v1/flexx/user/register',
+            jsonEncode(user.toJson()));
 
-          try {
-            response = await http.post(
-              Uri.parse('http://192.168.1.23:8081/api/v1/flexx/user/register'),
-              headers: <String, String>{
-                'Content-Type': 'application/json ; charset=UTF-8'
-              },
-              body: jsonEncode(user.toJson()),
-            );
-            return response;
-          } finally {}
-        }
-
-        fetchRegister.call().then((value) => debugPrint(value?.body));
+        //TODO CRIAR ALERT PERSONALIZADO E TRATAR MENSAGEM DE RETORNO DENTRO DE UM OBJETO
+        createUserRequest
+            .then((value) => {
+                  if (value.statusCode != 200)
+                    {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return AlertDialog(
+                          title: Text('Erro ao solicitar cadastro!'),
+                          content: SingleChildScrollView(
+                            child: ListBody(
+                              children: <Widget>[
+                                Text(utf8.decode(value.body.runes.toList())),
+                                Text(
+                                    'Por gentileza, verifique o dados e tente novamente!'),
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Approve'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      }))
+                    }
+                })
+            .catchError((err) => debugPrint(err));
 
         FocusScope.of(context).unfocus();
       },
