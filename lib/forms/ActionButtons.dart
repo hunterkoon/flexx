@@ -77,38 +77,30 @@ class ActionButtonCadastrarWidget extends StatelessWidget {
             jsonEncode(user.toJson()), {});
 
         createUserRequest.then((response) {
-          if (response.statusCode != 200)
-                {
+          if (response.statusCode != 200) {
             error = ErrorDTO.fromJson(jsonDecode(response.body));
             statusCode = response.statusCode;
-
             try {
               errorMessage = utf8.decode(error.message.runes.toList(), allowMalformed: false);
             } catch (e) {
               errorMessage = error.message;
             }
-
             debugPrint(errorMessage);
           }
-            });
 
-        // TODO IMPLEMENTAR LOADING
-        // TODO IMPLEMENTAR MODAL DE SUCESSO
-
-        Future.delayed(
-            const Duration(milliseconds: 2000),
-            () => {
-                  if (statusCode != 200)
-                    {
-                      debugPrint('My StatusCode: $statusCode'),
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return ModalAlertError(errorMessage!);
-                        },
-                      )
-                    }
-                });
+          // TODO IMPLEMENTAR LOADING
+          // TODO IMPLEMENTAR MODAL DE SUCESSO
+        }).then((retur) {
+          if (statusCode != 200) {
+            debugPrint('My StatusCode: $statusCode');
+            showModalBottomSheet<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return ModalAlertError(errorMessage!);
+              },
+            );
+          }
+        });
 
         FocusScope.of(context).unfocus();
       },
