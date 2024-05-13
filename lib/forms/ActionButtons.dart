@@ -76,15 +76,20 @@ class ActionButtonCadastrarWidget extends StatelessWidget {
             'http://192.168.1.23:8081/api/v1/flexx/user/register',
             jsonEncode(user.toJson()), {});
 
-        createUserRequest.then((response) => {
-              if (response.statusCode != 200)
+        createUserRequest.then((response) {
+          if (response.statusCode != 200)
                 {
-                  error = ErrorDTO.fromJson(jsonDecode(response.body)),
-                  debugPrint(error.message),
-                  statusCode = response.statusCode,
-                  errorMessage = utf8.decode(error.message.runes.toList(),
-                      allowMalformed: true),
-                }
+            error = ErrorDTO.fromJson(jsonDecode(response.body));
+            statusCode = response.statusCode;
+
+            try {
+              errorMessage = utf8.decode(error.message.runes.toList(), allowMalformed: false);
+            } catch (e) {
+              errorMessage = error.message;
+            }
+
+            debugPrint(errorMessage);
+          }
             });
 
         // TODO IMPLEMENTAR LOADING
