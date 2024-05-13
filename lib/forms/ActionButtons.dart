@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flexx/http/HttpRequests.dart';
+import 'package:flexx/models/ErrorDTO.dart';
 import 'package:flexx/models/UserDTO.dart';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
-import 'dart:convert' show utf8;
 
 class ActionButtonEntrarWidget extends StatelessWidget {
   const ActionButtonEntrarWidget({
@@ -61,63 +61,105 @@ class ActionButtonCadastrarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int statusCode = 200;
+    String? errorMessage = '';
+    ErrorDTO error;
+
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        fixedSize: const Size(180.0, 45.0),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        textStyle: const TextStyle(
-          fontSize: 18,
-        ),
-      ),
+      style: styleButton(),
       onPressed: () {
-        //TODO converter em JSON e chamar API de Cadastro
         UserDTO user =
             UserDTO(nomeCompleto.text, documento.text, 'CPF', senha.text);
         debugPrint('${user.toJson()}');
 
         Future<http.Response> createUserRequest = HttpRequests.requestHttpPost(
             'http://192.168.1.23:8081/api/v1/flexx/user/register',
-            jsonEncode(user.toJson()));
+            jsonEncode(user.toJson()), {});
 
-        //TODO CRIAR ALERT PERSONALIZADO E TRATAR MENSAGEM DE RETORNO DENTRO DE UM OBJETO
-        createUserRequest
-            .then((value) => {
-                  if (value.statusCode != 200)
+        createUserRequest.then((response) => {
+              if (response.statusCode != 200)
+                {
+                  error = ErrorDTO.fromJson(jsonDecode(response.body)),
+                  debugPrint(error.message),
+                  statusCode = response.statusCode,
+                  errorMessage = utf8.decode(error.message.runes.toList(),
+                      allowMalformed: true),
+                }
+            });
+
+        // TODO IMPLEMENTAR LOADING
+        // TODO IMPLEMENTAR MODAL DE SUCESSO
+
+        Future.delayed(
+            const Duration(milliseconds: 2000),
+            () => {
+                  if (statusCode != 200)
                     {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return AlertDialog(
-                          title: Text('Erro ao solicitar cadastro!'),
-                          content: SingleChildScrollView(
-                            child: ListBody(
-                              children: <Widget>[
-                                Text(utf8.decode(value.body.runes.toList())),
-                                Text(
-                                    'Por gentileza, verifique o dados e tente novamente!'),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('Approve'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      }))
+                      debugPrint('My StatusCode: $statusCode'),
+                      showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ModalAlertError(errorMessage!);
+                        },
+                      )
                     }
-                })
-            .catchError((err) => debugPrint(err));
+                });
 
         FocusScope.of(context).unfocus();
       },
       child: const Text('Cadastrar'),
     );
   }
+}
+
+class ModalAlertError extends StatelessWidget {
+  final String? errorMessage;
+
+  const ModalAlertError(String this.errorMessage, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 200,
+      color: Colors.grey,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(3),
+              child: Text('Ocorreu um erro: ${errorMessage!}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: styleButton(),
+                child: const Text('OK'),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//TODO CRIAR PACOTE DE ESTILOS
+ButtonStyle styleButton() {
+  return ElevatedButton.styleFrom(
+    fixedSize: const Size(180.0, 45.0),
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.red,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+    textStyle: const TextStyle(
+      fontSize: 18,
+    ),
+  );
 }

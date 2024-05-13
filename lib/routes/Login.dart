@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../forms/Forms.dart';
 import '../forms/ActionButtons.dart';
-import '../main.dart';
 
 class Login extends StatelessWidget {
   @override
@@ -11,7 +10,7 @@ class Login extends StatelessWidget {
 
     return Scaffold(
       body: Column(children: [
-        Editor.texto(
+        Editor.numero(
           'CPF/CNPJ',
           '12345678912',
           documentCtrl,
@@ -27,7 +26,7 @@ class Login extends StatelessWidget {
         TextButton(
           style: TextButton.styleFrom(foregroundColor: Colors.grey),
           onPressed: () {
-            Future<ListaTransferencias?> future = Navigator.push(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
                 return FormularioCadastro();
