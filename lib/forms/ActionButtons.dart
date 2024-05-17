@@ -69,7 +69,8 @@ class ActionButtonCadastrarWidget extends StatelessWidget {
       style: styleButton(),
       onPressed: () {
         UserDTO user =
-            UserDTO(nomeCompleto.text, documento.text, 'CPF', senha.text);
+            UserDTO(nomeCompleto.text, documento.text, 'CPF', senha.text, email.text , numeroCelular.text);
+
         debugPrint('${user.toJson()}');
 
         Future<http.Response> createUserRequest = HttpRequests.requestHttpPost(
