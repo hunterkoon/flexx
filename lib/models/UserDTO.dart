@@ -1,15 +1,10 @@
 class UserDTO {
-  final String fullName;
-
-  final String documentNumber;
-
-  final String documentType;
-
-  final String password;
-
-  final String email;
-
-  final String cellPhone;
+  String fullName;
+  String documentNumber;
+  String documentType;
+  String password;
+  String email;
+  String cellPhone;
 
   UserDTO(this.fullName, this.documentNumber, this.documentType, this.password, this.email, this.cellPhone);
 

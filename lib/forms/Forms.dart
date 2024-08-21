@@ -150,11 +150,11 @@ class FormularioCadastro extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Editor.numero("Cpf / Cnpj", "0000", documento, Icons.perm_identity),
+            Editor.numero("CPF / CNPJ", "0000", documento, Icons.perm_identity),
             Editor.senha("Senha", "0000", senha, Icons.password),
             Editor.texto("Nome Completo", "José Da Silva", nomeCompleto, Icons.text_format),
             Editor.texto("E-mail", "jose@gmail.com", email, Icons.email),
-            Editor.numero("Telefone", "11939213360", numeroCelular, Icons.phone_android),
+            Editor.numero("Celular", "11939213360", numeroCelular, Icons.phone_iphone),
             ActionButtonCadastrarWidget(
               documento: documento,
               senha: senha,

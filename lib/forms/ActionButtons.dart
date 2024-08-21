@@ -34,6 +34,8 @@ class ActionButtonEntrarWidget extends StatelessWidget {
         debugPrint(
             'Entrar ${documentCtrl.value.text} | ${passwordCtlr.value.text}');
 
+        //TODO IMPLEMENTAR CHAMADA A TELA DE LOGIN COM USUÁRIO LOGADO
+
         FocusScope.of(context).unfocus();
       },
       child: const Text('Entrar'),
@@ -43,7 +45,6 @@ class ActionButtonEntrarWidget extends StatelessWidget {
 
 class ActionButtonCadastrarWidget extends StatelessWidget {
   final TextEditingController documento;
-
   final TextEditingController senha;
   final TextEditingController nomeCompleto;
   final TextEditingController email;
@@ -61,20 +62,24 @@ class ActionButtonCadastrarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int statusCode = 200;
+    int statusCode = 0;
     String? errorMessage = '';
     ErrorDTO error;
 
     return ElevatedButton(
       style: styleButton(),
       onPressed: () {
-        UserDTO user =
-            UserDTO(nomeCompleto.text, documento.text, 'CPF', senha.text, email.text , numeroCelular.text);
+        UserDTO user = UserDTO(nomeCompleto.text, documento.text, "CNPJ",
+            senha.text, email.text, numeroCelular.text);
+
+        if (user.documentNumber.length < 14) {
+          user.documentType = "CPF";
+        }
 
         debugPrint('${user.toJson()}');
 
         Future<http.Response> createUserRequest = HttpRequests.requestHttpPost(
-            'http://192.168.1.23:8081/api/v1/flexx/user/register',
+            'http://192.168.1.6:8081/api/v1/flexx/user/register',
             jsonEncode(user.toJson()), {});
 
         createUserRequest.then((response) {

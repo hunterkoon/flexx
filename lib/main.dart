@@ -12,9 +12,11 @@ class FlexxApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Flexx',
       home: Scaffold(
+        //TODO IMPLEMENTAR IMAGEM DE LOGOTIPO
         body: Login(),
-        appBar:  AppBarWidget(),
+        //appBar:  AppBarWidget(),
       ),
     );
   }
